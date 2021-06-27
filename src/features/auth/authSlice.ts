@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../../app/store';
+import { RootState } from '../../app/store';
 import axios from 'axios'
 import {
   AUTH_STATE,
@@ -10,7 +10,6 @@ import {
   JWT,
   USER,
 } from '../types'
-import { AccessTimeOutlined } from '@material-ui/icons';
 
 
 //Feach JWT Token
@@ -192,7 +191,6 @@ export const authSlice = createSlice({
 
 export const { toggleMode } = authSlice.actions;
 
-export const selectCount = (state: RootState) => state.counter.value;
 export const selectIsLoginView = (state: RootState) => state.auth.isLoginView;
 export const selectIsLoginUser = (state: RootState) => state.auth.loginUser;
 export const selectIsProfile = (state: RootState) => state.auth.profiles;
