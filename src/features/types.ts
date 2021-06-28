@@ -1,13 +1,11 @@
-// authSlice.ts
-// Types of profile data from the API
+/*authSlice.ts*/
 export interface LOGIN_USER {
   id: number;
   username: string;
 }
-//Types of avatar pictures from the API
-export interface FILE {
+export interface FILE extends Blob {
   readonly lastModified: number;
-  readonly name:string;
+  readonly name: string;
 }
 export interface PROFILE {
   id: number;
@@ -35,8 +33,7 @@ export interface AUTH_STATE {
   loginUser: LOGIN_USER;
   profiles: PROFILE[];
 }
-
-//taskSlice.ts
+/*taskSlice.ts*/
 export interface READ_TASK {
   id: number;
   task: string;
@@ -54,7 +51,6 @@ export interface READ_TASK {
   created_at: string;
   updated_at: string;
 }
-
 export interface POST_TASK {
   id: number;
   task: string;
@@ -62,16 +58,13 @@ export interface POST_TASK {
   criteria: string;
   status: string;
   category: number;
-  extimate: number;
+  estimate: number;
   responsible: number;
-
 }
-
 export interface CATEGORY {
   id: number;
   item: string;
 }
-
 export interface TASK_STATE {
   tasks: READ_TASK[];
   editedTask: POST_TASK;
@@ -79,5 +72,9 @@ export interface TASK_STATE {
   users: USER[];
   category: CATEGORY[];
 }
-
-
+/*TaskList.tsx*/
+export interface SORT_STATE {
+  rows: READ_TASK[];
+  order: "desc" | "asc";
+  activeKey: string;
+}

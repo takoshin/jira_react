@@ -1,17 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-import axios from 'axios'
-import {
-  READ_TASK,
-  POST_TASK,
-  TASK_STATE,
-  USER,
-  CATEGORY,
-} from '../types';
-import { LaptopWindows } from '@material-ui/icons';
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import axios from "axios";
+import { READ_TASK, POST_TASK, TASK_STATE, USER, CATEGORY } from "../types";
 
-
-export const fetchAsyncGetTasks = createAsyncThunk('task/getTask', async() => {
+export const fetchAsyncGetTasks = createAsyncThunk("task/getTask", async () => {
   const res = await axios.get<READ_TASK[]>(
     `${process.env.REACT_APP_API_URL}/api/tasks/`,
     {
@@ -24,9 +16,9 @@ export const fetchAsyncGetTasks = createAsyncThunk('task/getTask', async() => {
 });
 
 export const fetchAsyncGetUsers = createAsyncThunk(
-  'task/getUsers',
+  "task/getUsers",
   async () => {
-    const res = await axios.get <USER[]>(
+    const res = await axios.get<USER[]>(
       `${process.env.REACT_APP_API_URL}/api/users/`,
       {
         headers: {
@@ -39,7 +31,7 @@ export const fetchAsyncGetUsers = createAsyncThunk(
 );
 
 export const fetchAsyncGetCategory = createAsyncThunk(
-  'task/get',
+  "task/getCategory",
   async () => {
     const res = await axios.get<CATEGORY[]>(
       `${process.env.REACT_APP_API_URL}/api/category/`,
@@ -54,9 +46,9 @@ export const fetchAsyncGetCategory = createAsyncThunk(
 );
 
 export const fetchAsyncCreateCategory = createAsyncThunk(
-  'task/createcategory',
+  "task/createCategory",
   async (item: string) => {
-    const  res = await axios.post<CATEGORY>(
+    const res = await axios.post<CATEGORY>(
       `${process.env.REACT_APP_API_URL}/api/category/`,
       { item: item },
       {
@@ -70,31 +62,31 @@ export const fetchAsyncCreateCategory = createAsyncThunk(
 );
 
 export const fetchAsyncCreateTask = createAsyncThunk(
-  'task/createTask',
+  "task/createTask",
   async (task: POST_TASK) => {
     const res = await axios.post<READ_TASK>(
       `${process.env.REACT_APP_API_URL}/api/tasks/`,
       task,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
-    return res.data
+    return res.data;
   }
 );
 
 export const fetchAsyncUpdateTask = createAsyncThunk(
-  'task/updateTask',
+  "task/updateTask",
   async (task: POST_TASK) => {
-    const res = await axios.put(
+    const res = await axios.put<READ_TASK>(
       `${process.env.REACT_APP_API_URL}/api/tasks/${task.id}/`,
       task,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
@@ -104,86 +96,81 @@ export const fetchAsyncUpdateTask = createAsyncThunk(
 );
 
 export const fetchAsyncDeleteTask = createAsyncThunk(
-  'task/deleteTask',
+  "task/deleteTask",
   async (id: number) => {
-    const res = await axios.delete(
-      `${process.env.REACT_APP_API_URL}/api/tasks/${id}/`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `JWT ${localStorage.localJWT}`,
-        },
-      }
-    );
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${id}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `JWT ${localStorage.localJWT}`,
+      },
+    });
     return id;
   }
 );
-
-
 
 export const initialState: TASK_STATE = {
   tasks: [
     {
       id: 0,
-      task: '',
-      description: '',
-      criteria: '',
+      task: "",
+      description: "",
+      criteria: "",
       owner: 0,
-      owner_username: '',
+      owner_username: "",
       responsible: 0,
-      responsible_username: '',
+      responsible_username: "",
       estimate: 0,
       category: 0,
-      category_item: '',
-      status: '',
-      status_name:'',
-      created_at: '',
-      updated_at:'',
+      category_item: "",
+      status: "",
+      status_name: "",
+      created_at: "",
+      updated_at: "",
     },
   ],
   editedTask: {
     id: 0,
-    task: '',
-    description: '',
-    criteria: '',
+    task: "",
+    description: "",
+    criteria: "",
     responsible: 0,
-    extimate: 0,
+    estimate: 0,
     category: 0,
-    status: '',
+    status: "",
   },
   selectedTask: {
     id: 0,
-    task: '',
-    description: '',
-    criteria: '',
+    task: "",
+    description: "",
+    criteria: "",
     owner: 0,
-    owner_username: '',
+    owner_username: "",
     responsible: 0,
-    responsible_username: '',
+    responsible_username: "",
     estimate: 0,
     category: 0,
-    category_item: '',
-    status: '',
-    status_name:'',
-    created_at: '',
-    updated_at:'',
+    category_item: "",
+    status: "",
+    status_name: "",
+    created_at: "",
+    updated_at: "",
   },
-  users: [{
-    id: 0,
-    username: '',
+  users: [
+    {
+      id: 0,
+      username: "",
     },
   ],
   category: [
     {
       id: 0,
-      item: '',
-    }
-  ]
+      item: "",
+    },
+  ],
 };
 
-
-export const taskSlice = createSlice ({
-  name:'task',
+export const taskSlice = createSlice({
+  name: "task",
   initialState,
   reducers: {
     editTask(state, action: PayloadAction<POST_TASK>) {
@@ -203,9 +190,8 @@ export const taskSlice = createSlice ({
         };
       }
     );
-    builder.addCase(fetchAsyncGetTasks.rejected,() => {
-        window.location.href = '/';
-    
+    builder.addCase(fetchAsyncGetTasks.rejected, () => {
+      window.location.href = "/";
     });
     builder.addCase(
       fetchAsyncGetUsers.fulfilled,
@@ -235,19 +221,20 @@ export const taskSlice = createSlice ({
       }
     );
     builder.addCase(fetchAsyncCreateCategory.rejected, () => {
-      window.location.href = '/';
+      window.location.href = "/";
     });
     builder.addCase(
       fetchAsyncCreateTask.fulfilled,
       (state, action: PayloadAction<READ_TASK>) => {
         return {
           ...state,
-          tasks: [...state.tasks, action.payload],
+          tasks: [action.payload, ...state.tasks],
+          editedTask: initialState.editedTask,
         };
       }
     );
     builder.addCase(fetchAsyncCreateTask.rejected, () => {
-      window.location.href = '/';
+      window.location.href = "/";
     });
     builder.addCase(
       fetchAsyncUpdateTask.fulfilled,
@@ -255,43 +242,37 @@ export const taskSlice = createSlice ({
         return {
           ...state,
           tasks: state.tasks.map((t) =>
-          t.id === action.payload.id ? action.payload : t),
+            t.id === action.payload.id ? action.payload : t
+          ),
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
         };
       }
     );
     builder.addCase(fetchAsyncUpdateTask.rejected, () => {
-      window.location.href = '/';
+      window.location.href = "/";
     });
-    builder.addCase(fetchAsyncDeleteTask.fulfilled,
+    builder.addCase(
+      fetchAsyncDeleteTask.fulfilled,
       (state, action: PayloadAction<number>) => {
         return {
           ...state,
           tasks: state.tasks.filter((t) => t.id !== action.payload),
           editedTask: initialState.editedTask,
           selectedTask: initialState.selectedTask,
-        }
-    })
+        };
+      }
+    );
     builder.addCase(fetchAsyncDeleteTask.rejected, () => {
-      window.location.href = '/';
+      window.location.href = "/";
     });
   },
 });
 
 export const { editTask, selectTask } = taskSlice.actions;
 export const selectSelectedTask = (state: RootState) => state.task.selectedTask;
-export const selectedEditedTask = (state: RootState) => state.task.editedTask;
-export const selecteTasks = (state: RootState) => state.task.tasks;
-export const selecteUsers = (state: RootState)=> state.task.users;
+export const selectEditedTask = (state: RootState) => state.task.editedTask;
+export const selectTasks = (state: RootState) => state.task.tasks;
+export const selectUsers = (state: RootState) => state.task.users;
 export const selectCategory = (state: RootState) => state.task.category;
 export default taskSlice.reducer;
-
-
-
-
-
-
-
-
-

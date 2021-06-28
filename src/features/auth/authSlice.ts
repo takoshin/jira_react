@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-import axios from 'axios'
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import axios from "axios";
 import {
   AUTH_STATE,
   CRED,
@@ -9,19 +9,17 @@ import {
   PROFILE,
   JWT,
   USER,
-} from '../types'
+} from "../types";
 
-
-//Feach JWT Token
 export const fetchAsyncLogin = createAsyncThunk(
-  'auth/login',
+  "auth/login",
   async (auth: CRED) => {
     const res = await axios.post<JWT>(
-      `${process.env.REACT_APP_API_URL}/authen/jwt/create/`,
-      auth, 
+      `${process.env.REACT_APP_API_URL}/authen/jwt/create`,
+      auth,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -29,17 +27,15 @@ export const fetchAsyncLogin = createAsyncThunk(
   }
 );
 
-
-//Register New Account
 export const fetchAsyncRegister = createAsyncThunk(
-  'auth/register',
+  "auth/register",
   async (auth: CRED) => {
     const res = await axios.post<USER>(
       `${process.env.REACT_APP_API_URL}/api/create/`,
       auth,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -47,114 +43,97 @@ export const fetchAsyncRegister = createAsyncThunk(
   }
 );
 
-
-// Login User
 export const fetchAsyncGetMyProf = createAsyncThunk(
-  'auth/loginuser',
+  "auth/loginuser",
   async () => {
-    const res = await axios.post<LOGIN_USER>(
+    const res = await axios.get<LOGIN_USER>(
       `${process.env.REACT_APP_API_URL}/api/loginuser/`,
       {
         headers: {
-          Authorization: `localStorage.localJWT`,
+          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
-    )
+    );
     return res.data;
   }
 );
 
-
-// Create Profile
 export const fetchAsyncCreateProf = createAsyncThunk(
-  'auth/createProfile',
+  "auth/createProfile",
   async () => {
     const res = await axios.post<PROFILE>(
       `${process.env.REACT_APP_API_URL}/api/profile/`,
-      {img: null},
+      { img: null },
       {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'localStoorage.localJWT',
+          "Content-Type": "application/json",
+          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
-    )
+    );
     return res.data;
   }
 );
 
-
-//Get Profiles
-export const fetchAsyncGetProfs = createAsyncThunk (
-  'auth/getProfiles',
+export const fetchAsyncGetProfs = createAsyncThunk(
+  "auth/getProfiles",
   async () => {
     const res = await axios.get<PROFILE[]>(
       `${process.env.REACT_APP_API_URL}/api/profile/`,
       {
         headers: {
-          Authorizatioin: `JWT ${localStorage.localJWT}`
+          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
-    )
+    );
     return res.data;
   }
 );
 
-
-//Update Profile
-export const fetchAsyncUpdateProf = createAsyncThunk (
-  'auth/updateProfile',
-  async (profile:POST_PROFILE) => {
+export const fetchAsyncUpdateProf = createAsyncThunk(
+  "auth/updateProfile",
+  async (profile: POST_PROFILE) => {
     const uploadData = new FormData();
-    profile.img && uploadData.append('img', profile.img, profile.img.name);
-    const res =await axios.put<PROFILE>(
-      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}`,
+    profile.img && uploadData.append("img", profile.img, profile.img.name);
+    const res = await axios.put<PROFILE>(
+      `${process.env.REACT_APP_API_URL}/api/profile/${profile.id}/`,
       uploadData,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Authorizetion: `JWT ${localStorage.localJWT}`,
+          "Content-Type": "application/json",
+          Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
     );
-    return res.data
+    return res.data;
   }
 );
-
 
 const initialState: AUTH_STATE = {
   isLoginView: true,
   loginUser: {
     id: 0,
-    username: ''
+    username: "",
   },
-  profiles: [{
-    id: 0,
-    user_profile: 0,
-    img: null
-  }]
+  profiles: [{ id: 0, user_profile: 0, img: null }],
 };
 
-//AuthSlice
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
-  // Toggle Login Logout
   reducers: {
     toggleMode(state) {
       state.isLoginView = !state.isLoginView;
     },
   },
-  //Store the obtained JWT tokens in local storage. 
   extraReducers: (builder) => {
     builder.addCase(
       fetchAsyncLogin.fulfilled,
       (state, action: PayloadAction<JWT>) => {
-        localStorage.setItem('localJWT', action.payload.access);
-        action.payload.access && (window.location.href = '/tasks');
+        localStorage.setItem("localJWT", action.payload.access);
+        action.payload.access && (window.location.href = "/tasks");
       }
     );
-    //Stores the profile received upon successful login.
     builder.addCase(
       fetchAsyncGetMyProf.fulfilled,
       (state, action: PayloadAction<LOGIN_USER>) => {
@@ -164,7 +143,6 @@ export const authSlice = createSlice({
         };
       }
     );
-    //Store the list of profiles you have obtained.
     builder.addCase(
       fetchAsyncGetProfs.fulfilled,
       (state, action: PayloadAction<PROFILE[]>) => {
@@ -174,14 +152,13 @@ export const authSlice = createSlice({
         };
       }
     );
-    //Reflect the changed status.
     builder.addCase(
       fetchAsyncUpdateProf.fulfilled,
       (state, action: PayloadAction<PROFILE>) => {
         return {
           ...state,
-          profiles: state.profiles.map((prof) => 
-          prof.id === action.payload.id ? action.payload : prof
+          profiles: state.profiles.map((prof) =>
+            prof.id === action.payload.id ? action.payload : prof
           ),
         };
       }
@@ -192,7 +169,7 @@ export const authSlice = createSlice({
 export const { toggleMode } = authSlice.actions;
 
 export const selectIsLoginView = (state: RootState) => state.auth.isLoginView;
-export const selectIsLoginUser = (state: RootState) => state.auth.loginUser;
-export const selectIsProfile = (state: RootState) => state.auth.profiles;
+export const selectLoginUser = (state: RootState) => state.auth.loginUser;
+export const selectProfiles = (state: RootState) => state.auth.profiles;
 
 export default authSlice.reducer;
